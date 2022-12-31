@@ -7,8 +7,9 @@
 
 2. Config django-storage, so it can serve uploaded or static assets
 
-```
-# DO SPACES
+```python3
+
+# DIGITAL OCEAN SPACES CONFIG
 AWS_ACCESS_KEY_ID = 'secret123' # goto API menu in side bar. Generate SPACE Access Key
 AWS_SECRET_ACCESS_KEY = 'secretAccess'# goto API menu in side bar. Generate SPACE Secret Access Key
 AWS_STORAGE_BUCKET_NAME = 'myspace' #your space object storage name
@@ -21,6 +22,7 @@ AWS_LOCATION = 'testing.com' # A directory in your space
 MEDIA_URL = 'https://%s/%s/' % (AWS_S3_ENDPOINT_URL, AWS_LOCATION)
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
 ```
 
 3. If you want to use whitenoise to serve static assets, add these lines `settings.py`
