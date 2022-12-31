@@ -9,7 +9,9 @@
 
 ```python3
 
+# ----------------------------
 # DIGITAL OCEAN SPACES CONFIG
+# ----------------------------
 AWS_ACCESS_KEY_ID = 'secret123' # goto API menu in side bar. Generate SPACE Access Key
 AWS_SECRET_ACCESS_KEY = 'secretAccess'# goto API menu in side bar. Generate SPACE Secret Access Key
 AWS_STORAGE_BUCKET_NAME = 'myspace' #your space object storage name
@@ -19,9 +21,23 @@ AWS_S3_OBJECT_PARAMETERS = {
 }
 AWS_LOCATION = 'testing.com' # A directory in your space
 
-MEDIA_URL = 'https://%s/%s/' % (AWS_S3_ENDPOINT_URL, AWS_LOCATION)
+
+# ----------------------------
+# ASSETS CONFIG
+# ----------------------------
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+STATIC_URL = 'static/' # static url
+STATIC_ROOT = BASE_DIR.parent / "public/static" # sample location assets
+STATICFILES_DIRS = [
+    BASE_DIR.parent / "assets", # another sample location assets
+]
+
+
+# MEDIA_URL = 'media/'
+MEDIA_URL = 'https://%s/%s/' % (AWS_S3_ENDPOINT_URL, AWS_LOCATION) # Media url
+# MEDIA_ROOT = BASE_DIR.parent / "public/media"
 
 ```
 
