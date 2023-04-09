@@ -1,59 +1,55 @@
 ## Config
 
-1. Install whitenoise, django-storage, and boto3
+1. Install libraries
+`pipenv install django-storages boto3`
 
-`pip install whitenoise django-storage boto3`
-
-
-2. Config django-storage, so it can serve uploaded or static assets
-
+2. Add file storage config
 ```python3
+from django.conf import settings
+from storages.backends.s3boto3 import S3Boto3Storage
 
+
+class StaticStorage(S3Boto3Storage):
+    location = 'testing.com/public/static'  # file location in space
+    default_acl = 'public-read'
+
+
+class PublicMediaStorage(S3Boto3Storage):
+    location = 'testing.com/public/media'
+    default_acl = 'public-read'
+    file_overwrite = False
+
+
+class PrivateMediaStorage(S3Boto3Storage):
+    location = 'private'
+    default_acl = 'private'
+    file_overwrite = False
+    custom_domain = False 
+```
+
+3. Set config in `settings.py`
+```python3
 # ----------------------------
 # DIGITAL OCEAN SPACES CONFIG
 # ----------------------------
-AWS_ACCESS_KEY_ID = 'secret123' # goto API menu in side bar. Generate SPACE Access Key
-AWS_SECRET_ACCESS_KEY = 'secretAccess'# goto API menu in side bar. Generate SPACE Secret Access Key
-AWS_STORAGE_BUCKET_NAME = 'myspace' #your space object storage name
+AWS_ACCESS_KEY_ID = 'your-key' # goto API menu in side bar. Generate SPACE Access Key
+AWS_SECRET_ACCESS_KEY = 'your-secret-key'# goto API menu in side bar. Generate SPACE Secret Access Key
+AWS_STORAGE_BUCKET_NAME = 'your-space-name' #your space object storage name
 AWS_S3_ENDPOINT_URL = 'https://sgp1.digitaloceanspaces.com'
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
-AWS_LOCATION = 'testing.com' # A directory in your space
-
-
 # ----------------------------
 # ASSETS CONFIG
 # ----------------------------
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-STATIC_URL = 'static/' # static url
-STATIC_ROOT = BASE_DIR.parent / "public/static" # sample location assets
-STATICFILES_DIRS = [
-    BASE_DIR.parent / "assets", # another sample location assets
-]
+STATICFILES_STORAGE = 'core.storage_backends.StaticStorage'
+DEFAULT_FILE_STORAGE = 'core.storage_backends.PublicMediaStorage'
 
-
-# MEDIA_URL = 'media/'
-MEDIA_URL = 'https://%s/%s/' % (AWS_S3_ENDPOINT_URL, AWS_LOCATION) # Media url
-# MEDIA_ROOT = BASE_DIR.parent / "public/media"
+# Below settings will be ignored when using above storages 
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR.parent / 'public/static'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR.parent / 'public/media'
 
 ```
-
-3. If you want to use whitenoise to serve static assets, add these lines `settings.py`
-
-```python3
-MIDDLEWARE = [
-    # ...
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    # ...
-]
-
-# Want forever-cacheable files and compression support? Add this
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-```
-
-
